@@ -23,6 +23,9 @@ Function Calling（函数调用）机制的诞生，就是给模型"一双 hands
 
 你的代码执行这个指令 → 调用真实的天气 API → 拿到结果 → 把结果塞回给模型 → 模型再组织成自然语言回答用户。
 
+
+函数调用(Function Call)是大语言模型的一种能力：模型不仅返回文本，还能按照约定的格式返回需要调用的外部函数/工具的名称和参数信息。
+
 ### 本质
 Function Calling 是**各模型厂商的私有实现**——OpenAI、Anthropic、智谱等都有自己的函数调用格式。它解决的是"模型怎么表达调用意图"这个最原子的机制问题。
 
@@ -57,6 +60,23 @@ MCP 遵循客户端 - 主机 - 服务器架构，架构中包括：
 	- **Resources**（资源）：只读数据（文件、数据库、API 返回值）
 	- **Tools**（工具）：可执行函数（发邮件、查数据库、调用第三方服务）
 	- **Prompts**（提示模板）：预定义工作流
+
+
+MCP Client 与 MCP Server之间有两种通信协议：
+
+- stdio
+- streamable_http
+
+stdio就是标准输入输出，MCP Client运行时，分两种情况：
+
+- 外部服务：Client会把这个MCP服务的脚本下载到本地，然后作为一个子进程运行。    
+- 本地服务：Client会把本地脚本直接加载，作为一个子进程运行
+
+也就是说，stdio模式中，MCP Client 和 MCP Server之间的通信就是进程通信，没有网络延迟。
+
+streamable_http其实就是可以用event stream来发送数据的http模式，本质还是Server Event Stream，也就是SSE。也就是说MCP client通过发送http请求与MCP server交互。因此存在一定的网络延迟。
+
+
 
 ### 精妙的"握手"机制
 

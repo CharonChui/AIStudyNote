@@ -1,7 +1,25 @@
 
+通常在以下几种情况下我们会使用Multi Agent：
+
+- **上下文管理(Context Management)**：如果同时需要调用的工具很多，或者上下文内容很多，我们可以将任务拆分，交给不同的Agent处理
+    
+- **分布式开发(Distributed development)**：不同的团队独立开发和维护自己的Agent，并将他们组合成一个更大的Agent
+    
+- **并行(Parallelization)**：将任务拆分为多个子任务，并交给专门的Agent处理，并同时执行它们以加快处理速度
 
 
-整体架构： 一个总的调度的Agent，类似网关，去识别分发到对应的子Agent中。 
+## 多智能体协作模式
+
+- Subagents: 子代理模式，一个主Agent将多个子Agent作为Tool来协调使用，所有请求都由主Agent处理，决定何时以及如何调用每个子Agent
+  整体架构： 一个总的调度的Agent，类似网关，去识别分发到对应的子Agent中。 
+![[Pasted image 20260908204906.png]]
+
+- Handoffs: 传递模型，随着任务的执行改变state中的任务状态，从而出发路由变更或者出发Agent的配置变更，从而切换到其他Agent或者改变Agent的工具或系统提示(类似与一个新Agent)。因此每个Agent都可以与用户交互，处理用户请求并返回。
+  ![[Pasted image 20260908205053.png]]
+- Skills：技能模式，只有1个Agent，根据任务按需加载Skill或知识
+  ![[Pasted image 20260908205135.png]]
+- Router：路由模式，1个负责路由的Agent对用户请求进行分类，将请求导向给一个或多个专门的Agent。最后由一个Agent负责总结结果。 
+  ![[Pasted image 20260908205224.png]]
 
 
 OpenAIAgents中的挂载方式分两种:   
